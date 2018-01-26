@@ -11,6 +11,7 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var toDoListArray = ["Find House", "Arrange Viewing", "Market Current Property", "Arrange Move", "Complete School Forms"]
+    let defaultSave = UserDefaults.standard
     
     
     @IBOutlet weak var numberOfItems: UIBarButtonItem!
@@ -25,6 +26,7 @@ class TodoListViewController: UITableViewController {
         let action  = UIAlertAction(title: "Add", style: .default) { (action) in
             if addedItem.text != "" {
                 self.toDoListArray.append(addedItem.text!)
+                self.defaultSave.set(self.toDoListArray, forKey: "ExistingToDoList")
                 self.tableView.reloadData()
             }
         }
@@ -40,13 +42,31 @@ class TodoListViewController: UITableViewController {
     
     @IBAction func trashButtonPressed(_ sender: UIBarButtonItem) {
         
+        // This function doesn't currently work!
         
+        var indexPath = IndexPath()
+        
+        for position in 0...toDoListArray.count {
+            print("In Loop: \(position)")
+            indexPath.row = position
+
+            if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+                print("Deleting Position: \(position)")
+                toDoListArray.remove(at: position)
+            }
+        }
+        tableView.reloadData()
         
     }
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let items = defaultSave.array(forKey: "ExistingToDoList") as? [String] {
+            toDoListArray = items
+        }
+ 
     }
 
     //MARK - Tableview Datasource Methods
@@ -79,6 +99,8 @@ class TodoListViewController: UITableViewController {
         }
        
     }
+    
+
     
 }
 
