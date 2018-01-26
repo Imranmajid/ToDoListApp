@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -32,7 +33,28 @@
                             <outlet property="delegate" destination="eN0-qp-lhc" id="K1e-l8-HRB"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="To Do List" id="edT-qx-sp1"/>
+                    <navigationItem key="navigationItem" title="To Do List" id="edT-qx-sp1">
+                        <barButtonItem key="leftBarButtonItem" title="0" id="Zhj-jE-Jup">
+                            <color key="tintColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="b55-Zh-Dev">
+                                <color key="tintColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <action selector="barAddButtonPressed:" destination="eN0-qp-lhc" id="iU5-6O-EKF"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="trash" id="gJn-rV-cbn">
+                                <color key="tintColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <connections>
+                                    <action selector="trashButtonPressed:" destination="eN0-qp-lhc" id="eQ3-AC-aDb"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="numberOfItems" destination="Zhj-jE-Jup" id="2F8-rp-cus"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KL2-K0-CTQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
