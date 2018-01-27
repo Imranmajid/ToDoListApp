@@ -10,8 +10,9 @@ import UIKit
 
 class TodoListViewController: UITableViewController {
     
-    var toDoListArray = ["Find House", "Arrange Viewing", "Market Current Property", "Arrange Move", "Complete School Forms"]
+    var toDoListArray = [DataModel]()
     let defaultSave = UserDefaults.standard
+    let saveKey = "ExistingToDoList"
     
     
     @IBOutlet weak var numberOfItems: UIBarButtonItem!
@@ -25,8 +26,11 @@ class TodoListViewController: UITableViewController {
         let alert   = UIAlertController(title: "To Do App", message: "", preferredStyle: .alert)
         let action  = UIAlertAction(title: "Add", style: .default) { (action) in
             if addedItem.text != "" {
-                self.toDoListArray.append(addedItem.text!)
-                self.defaultSave.set(self.toDoListArray, forKey: "ExistingToDoList")
+                let newItem = DataModel()
+                newItem.title = addedItem.text!
+                self.toDoListArray.append(newItem)
+                self.defaultSave.set(self.toDoListArray, forKey: self.saveKey)
+                print("Item saved to memory")
                 self.tableView.reloadData()
             }
         }
@@ -39,68 +43,60 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
         
     }
-    
-    @IBAction func trashButtonPressed(_ sender: UIBarButtonItem) {
-        
-        // This function doesn't currently work!
-        
-        var indexPath = IndexPath()
-        
-        for position in 0...toDoListArray.count {
-            print("In Loop: \(position)")
-            indexPath.row = position
 
-            if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-                print("Deleting Position: \(position)")
-                toDoListArray.remove(at: position)
-            }
-        }
-        tableView.reloadData()
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let swipe = UISwipeActionsConfiguration.init()
         
+        toDoListArray.remove(at: indexPath.row)
+        tableView.reloadData()
+        print("Hi")
+        return swipe
     }
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let items = defaultSave.array(forKey: "ExistingToDoList") as? [String] {
+        if let items = defaultSave.array(forKey: saveKey) as? [DataModel] {
             toDoListArray = items
+            print("Items loaded into memory.")
         }
- 
+        
     }
-
+    
     //MARK - Tableview Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         numberOfItems.title = String(toDoListArray.count)
         return toDoListArray.count
-
+        
     }
-
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        cell.textLabel?.text = toDoListArray[indexPath.row]
+        cell.textLabel?.text = toDoListArray[indexPath.row].title
+        
+        cell.accessoryType = (toDoListArray[indexPath.row].done ? .checkmark : .none)
+        
+        //Ternary Operator
+        // Value = Condtion <?> ValueifTrue : ValueifFalse
         
         return cell
         
     }
-
+    
     //MARK - TableView Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
-        else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-       
+        toDoListArray[indexPath.row].done = !toDoListArray[indexPath.row].done
+        tableView.reloadData()
+        
     }
     
-
+    
     
 }
 
