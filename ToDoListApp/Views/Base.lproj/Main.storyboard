@@ -9,7 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--To Do List-->
+        <!--Islamic To Do's-->
         <scene sceneID="xGg-a9-9uE">
             <objects>
                 <tableViewController id="eN0-qp-lhc" customClass="TodoListViewController" customModule="ToDoListApp" customModuleProvider="target" sceneMemberID="viewController">
@@ -32,7 +32,7 @@
                             <outlet property="delegate" destination="eN0-qp-lhc" id="K1e-l8-HRB"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="To Do List" id="edT-qx-sp1">
+                    <navigationItem key="navigationItem" title="Islamic To Do's" id="edT-qx-sp1">
                         <barButtonItem key="leftBarButtonItem" title="0" id="Zhj-jE-Jup">
                             <color key="tintColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </barButtonItem>
@@ -59,7 +59,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="SVO-Zc-Vaj">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <color key="barTintColor" red="0.61082446580000005" green="0.10584760460000001" blue="0.11953178790000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="barTintColor" red="0.0" green="0.56031829119999998" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <textAttributes key="titleTextAttributes">
                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                             <color key="textColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

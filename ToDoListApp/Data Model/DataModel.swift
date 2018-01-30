@@ -8,9 +8,9 @@
 
 import Foundation
 
-class DataModel {
+class DataModel: Codable {
     
     var title   : String    = ""
     var done    : Bool      = false
-    
+
 }
