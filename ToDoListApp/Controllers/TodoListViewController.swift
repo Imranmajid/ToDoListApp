@@ -7,14 +7,16 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
     
-    var toDoListArray = [DataModel]()
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("ExistingToDoList.plist")
-    
+    var toDoListArray = [ToDoItem]()
+//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("ExistingToDoList.plist")
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
     @IBOutlet weak var numberOfItems: UIBarButtonItem!
-    
+    @IBOutlet weak var searchBar: UISearchBar!
     
     @IBAction func barAddButtonPressed(_ sender: UIBarButtonItem) {
         
@@ -23,7 +25,7 @@ class TodoListViewController: UITableViewController {
         let alert   = UIAlertController(title: "To Do App", message: "", preferredStyle: .alert)
         let action  = UIAlertAction(title: "Add", style: .default) { (action) in
             if addedItem.text != "" {
-                let newItem = DataModel()
+                let newItem = ToDoItem(context: self.context)
                 newItem.title = addedItem.text!
                 self.toDoListArray.append(newItem)
                 self.tableView.reloadData()
@@ -40,16 +42,22 @@ class TodoListViewController: UITableViewController {
     }
     
     
+    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let swipe = UISwipeActionsConfiguration.init()
+
+        context.delete(toDoListArray[indexPath.row])
+        saveData()
         
         toDoListArray.remove(at: indexPath.row)
         tableView.reloadData()
+        
         return swipe
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.delegate = self
         
         loadData()
     }
@@ -77,29 +85,60 @@ class TodoListViewController: UITableViewController {
         saveData()
     }
     
-    func loadData() {
+
+    
+    func loadData(with dateRequest : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest()) {
         
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                toDoListArray = try decoder.decode([DataModel].self, from: data)
-            } catch {
-                print("Error: \(error)")
-            }
+        do {
+            toDoListArray = try context.fetch(dateRequest)
         }
+        catch {
+            print("Loading Data Error: \(error)")
+        }
+        
+        tableView.reloadData()
     }
     
     func saveData() {
         
-        let encoder = PropertyListEncoder()
         do {
-            let data = try encoder.encode(self.toDoListArray)
-            try data.write(to: self.dataFilePath!)
+            try context.save()
         }
         catch {
-            print("Error Saving items: \(error)")
+            print("Saving Data Error: \(error)")
         }
     }
-    
 }
 
+//MARK: - Search Bar Extension and Methods.
+
+extension TodoListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let request     : NSFetchRequest<ToDoItem> = ToDoItem.fetchRequest()
+        let filter      = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        let description = NSSortDescriptor(key: "title", ascending: true)
+        
+        request.predicate = filter
+        request.sortDescriptors = [description]
+        
+        loadData(with: request)
+
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadData()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+        else {
+            searchBarSearchButtonClicked(searchBar)
+        }
+    }
+
+    
+}
